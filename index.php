@@ -1,34 +1,43 @@
-<?php
-$insert = false;
+<!-- PHP FOR CONNECTION & DATA INSERTION-->
+    <?php
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "notes";
+        // SUCCESS POPUP VARIABLE INTIALIZE
+            $insert = false;
+        //SUCCESS POPUP VARIABLE INTIALIZE OVER
 
-$conn = mysqli_connect($servername, $username, $password, $database);
+        //CONNECTION TO THE DATABASE
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $database = "notes";
 
-if(!$conn){
-    die("Connection Refused ".mysqli_connect_error());
-}
+            $conn = mysqli_connect($servername, $username, $password, $database);
 
-if($_SERVER['REQUEST_METHOD']=='POST'){
-        $title = $_POST['title'];
-        $description = $_POST['description']; 
+            if(!$conn){
+                die("Connection Refused ".mysqli_connect_error());
+            }
+        //CONNECTION TO THE DATABASE OVER
 
-        $sql = "INSERT INTO `notes` (`sno`, `title`, `description`, `timestmp`) VALUES (NULL, '$title', '$description', current_timestamp());";
+        //DATA INSERTION
+            if($_SERVER['REQUEST_METHOD']=='POST'){
+                    $title = $_POST['title'];
+                    $description = $_POST['description']; 
 
-    $result = mysqli_query($conn, $sql);
+                    $sql = "INSERT INTO `notes` (`sno`, `title`, `description`, `timestmp`) VALUES (NULL, '$title', '$description', current_timestamp());";
 
-    if($result){
-        $insert = true;
-    }
-    else{
-        echo "data not created because of thisssssssssssssssssss".mysqli_error($conn);
-    }
-}
+                $result = mysqli_query($conn, $sql);
 
-?>
+                if($result){
+                    $insert = true;
+                }
+                else{
+                    echo "data not created because of thisssssssssssssssssss".mysqli_error($conn);
+                }
+            }
+        //DATA INSERTION OVER
+
+    ?>
+<!-- PHP FOR CONNECTION & DATA INSERTION OVER--> 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,130 +59,154 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+
+    <!-- NAVBAR  -->
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dropdown
+                    </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    <!-- NAVBAR OVER -->
 
-    <?php
-    
-        if($insert){
-            echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-            <strong>Success!</strong> Your note inserted.
-            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-          </div>";
-        }
-    
-    ?>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 mt-5">
-                <h2 class="text-center mb-4">Add a Note</h2>
-                <form action="/todo/index.php" method="post">
-                    <div class="form-group">
-                        <label for="title">Note Title</label>
-                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter Note">
-                    </div>
-                    <div class="form-group">
-                        <label for="description" class="form-label">Note description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="description"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary my-2">Add Note</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-
+    <!-- PHP FOR INSERTION SUCCESS UI  -->
+        <?php
         
-
-<table class="table" id="myTable">
-  <thead>
-    <tr>
-      <th scope="col">S.No</th>
-      <th scope="col">Title</th>
-      <th scope="col">description</th>
-    </tr>
-  </thead>
-  <tbody>
-
-
-
-  <?php
-
-        $sql = "SELECT * FROM `notes`";
-
-        $result = mysqli_query($conn, $sql);
-
+            if($insert){
+                echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                <strong>Success!</strong> Your note inserted.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>";
+            }
         
-        // $num = mysqli_num_rows($result);
-        // echo $num;
-        
-        $sno = 0;
-        echo "<br>";
-
-        while($row = mysqli_fetch_assoc($result)){
-            $sno = $sno++;
-            echo "<tr>
-            <th scope='row'>".$row['sno']."</th>
-            <td>".$row['title']."</td>
-            <td>".$row['description']."</td>
-          </tr>";
-        }
-
-
         ?>
-    
-  </tbody>
-</table>
-
-    </div>
-
-    
+    <!-- PHP FOR INSERTION UI OVER-->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="//cdn.datatables.net/2.0.4/js/dataTables.min.js"></script>
-    <script>
-        let table = new DataTable('#myTable');
-    </script>
+    <!-- FORM  -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 mt-5">
+                    <h2 class="text-center mb-4">Add a Note</h2>
+                    <form action="/todo/index.php" method="post">
+                        <div class="form-group">
+                            <label for="title">Note Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Enter Note">
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="form-label">Note description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="description"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary my-2">Add Note</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <!-- FORM OVER-->
+
+
+    <!-- TABLE AND TABLE UI USING PHP -->
+        <div class="container">
+
+            <table class="table" id="myTable">
+            <thead>
+                <tr>
+                <th scope="col">S.No</th>
+                <th scope="col">Title</th>
+                <th scope="col">description</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+            <!-- PHP FOR SELECT AND TABLE UI  -->
+            <?php
+
+                    $sql = "SELECT * FROM `notes`";
+
+                    $result = mysqli_query($conn, $sql);
+                    
+                    $sno = 0;
+                    echo "<br>";
+
+                    while($row = mysqli_fetch_assoc($result)){
+                        $sno = $sno++;
+                        echo "<tr>
+                        <th scope='row'>".$row['sno']."</th>
+                        <td>".$row['title']."</td>
+                        <td>".$row['description']."</td>
+                    </tr>";
+                    }
+
+
+                    ?>
+                    <!-- PHP FOR SELECT AND TABLE UI OVER -->
+
+                
+            </tbody>
+            </table>
+
+        </div>
+    <!-- TABLE AND TABLE UI USING PHP -->
+
+
+
+        
+
+    <!-- BOOTSTRAP JS CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- BOOTSTRAP JS CDN OVER-->
+
+
+    <!-- JQUERY UNCOMPRESSED CDN -->
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <!-- JQUERY UNCOMPRESSED CDN OVER-->
+
+
+    <!-- DATATABLE JS CDN -->
+        <script src="//cdn.datatables.net/2.0.4/js/dataTables.min.js"></script>
+    <!-- DATATABLE JS CDN OVER-->
+
+
+    <!-- DATATABLE INTIALIZE SCRIPT -->
+        <script>
+            let table = new DataTable('#myTable');
+        </script>
+    <!-- DATATABLE INTIALIZE SCRIPT OVER-->
+
 
 </body>
 
