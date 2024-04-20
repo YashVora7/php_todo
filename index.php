@@ -1,69 +1,79 @@
-<!-- PHP FOR DATABASE CONNECTION & DATA INSERTION-->
-<?php
+<!-- PHP FOR DATABASE CONNECTION & DATA CRUD-->
+    <?php
 
-    // SUCCESS POPUP VARIABLE INTIALIZATION
-    $insert = false;
-    $update = false;
-    $delete = false;
-    // SUCCESS POPUP VARIABLE INTIALIZATION OVER
+        // SUCCESS POPUP VARIABLE INITIALIZATION
+            $insert = false;
+            $update = false;
+            $delete = false;
+        // SUCCESS POPUP VARIABLE INITIALIZATION OVER
 
-    // CONNECTION TO THE DATABASE
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "notes";
+        // CONNECTION TO THE DATABASE
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $database = "notes";
 
-    $conn = mysqli_connect($servername, $username, $password, $database);
+            $conn = mysqli_connect($servername, $username, $password, $database);
+        // CONNECTION TO THE DATABASE OVER
 
-    // CONNECTION TO THE DATABASE OVER
-
-    // DATA DELETION
-    if (isset($_GET['delete'])) {
-        $sno = $_GET['delete'];
-        $delete = true;
-        $sql = "DELETE FROM `notes` WHERE `sno` = $sno";
-        $result = mysqli_query($conn, $sql);
-    }
-
-    // DATA INSERTION AND UPDATION
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-        // DATA UPDATION
-        if (isset($_POST['snoEdit'])) {
-            $sno = $_POST['snoEdit'];
-            $title = $_POST['titleEdit'];
-            $description = $_POST['descriptionEdit'];
-
-            // SQL UPDATE statement
-            $sql = "UPDATE `notes` SET `title` = '$title', `description` = '$description' WHERE `sno` = $sno";
-
-            $result = mysqli_query($conn, $sql);
-
-            if ($result) {
-                $update = true;
-            } else {
-                echo "Not update" . mysqli_error($conn);
+        // DATA DELETION
+            if (isset($_GET['delete'])) {
+                $sno = $_GET['delete'];
+                $delete = true;
+                $sql = "DELETE FROM `notes` WHERE `sno` = $sno";
+                $result = mysqli_query($conn, $sql);
             }
-        }
+        // DATA DELETION OVER
 
-        // DATA INSERTION
-        $title = $_POST['title'];
-        $description = $_POST['description'];
 
-        $sql = "INSERT INTO `notes` (`sno`, `title`, `description`, `timestmp`) VALUES (NULL, '$title', '$description', current_timestamp());";
+        // DATA INSERTION AND UPDATING
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        $result = mysqli_query($conn, $sql);
+                // DATA UPDATING
+                    if (isset($_POST['snoEdit'], $_POST['titleEdit'], $_POST['descriptionEdit'])) {
+                        $sno = $_POST['snoEdit'];
+                        $title = $_POST['titleEdit'];
+                        $description = $_POST['descriptionEdit'];
+                    
+                        // Prepared statement to update records
+                        $sql = "UPDATE `notes` SET `title` = ?, `description` = ? WHERE `sno` = ?";
+                        $stmt = mysqli_prepare($conn, $sql);
+                    
+                        // Bind parameters
+                        mysqli_stmt_bind_param($stmt, "ssi", $title, $description, $sno);
+                    
+                        // Execute statement
+                        if (mysqli_stmt_execute($stmt)) {
+                            $update = true;
+                        } else {
+                            // Handle errors gracefully
+                            echo "Error: " . mysqli_stmt_error($stmt);
+                        }
+                    
+                        mysqli_stmt_close($stmt);
+                    }
+                // DATA UPDATING OVER
 
-        if ($result) {
-            $insert = true;
-        } else {
-            echo "data not created because of this" . mysqli_error($conn);
-        }
-    }
-    // DATA INSERTION AND UPDATION OVER
+                // DATA INSERTION
+                    $title = $_POST['title'];
+                    $description = $_POST['description'];
 
-?>
-<!-- PHP FOR CONNECTION & DATA INSERTION OVER-->
+                    $sql = "INSERT INTO `notes` (`sno`, `title`, `description`, `timestmp`) VALUES (NULL, '$title', '$description', current_timestamp());";
+
+                    $result = mysqli_query($conn, $sql);
+
+                    if ($result) {
+                        $insert = true;
+                    } else {
+                        echo "data not created because of this" . mysqli_error($conn);
+                    }
+                // DATA INSERTION OVER
+
+            }
+        // DATA INSERTION AND UPDATING OVER
+
+    ?>
+<!-- PHP FOR CONNECTION & DATA CRUD OVER-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -123,26 +133,26 @@
     <!-- EDIT MODAL OVER-->
 
     <!-- PHP FOR INSERTION SUCCESS UI  -->
-    <?php
-        if ($insert) {
-            echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-                    <strong>Success!</strong> Your note inserted.
-                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                    </div>";
-        }
-        if ($update) {
-            echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-                    <strong>Success!</strong> Your note Updated.
-                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                    </div>";
-        }
-        if ($delete) {
-            echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-                    <strong>Success!</strong> Your note Deleted.
-                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                    </div>";
-        }
-    ?>
+        <?php
+            if ($insert) {
+                echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                        <strong>Success!</strong> Your note inserted.
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                        </div>";
+            }
+            if ($update) {
+                echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                        <strong>Success!</strong> Your note Updated.
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                        </div>";
+            }
+            if ($delete) {
+                echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                        <strong>Success!</strong> Your note Deleted.
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                        </div>";
+            }
+        ?>
     <!-- PHP FOR INSERTION UI OVER-->
 
 
@@ -185,29 +195,24 @@
 
 
                     <!-- PHP FOR SELECT AND TABLE UI  -->
-                    <?php
+                        <?php
+                            $sql = "SELECT * FROM `notes`";
 
-                    $sql = "SELECT * FROM `notes`";
+                            $result = mysqli_query($conn, $sql);
 
-                    $result = mysqli_query($conn, $sql);
+                            $sno = 0;
+                            echo "<br>";
 
-                    $sno = 0;
-                    echo "<br>";
-
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        $sno = $sno++;
-                        echo "<tr>
-                            <th scope='row'>" . $row['sno'] . "</th>
-                            <td>" . $row['title'] . "</td>
-                            <td>" . $row['description'] . "</td>
-                            <td><button class='edit btn btn-sm btn-primary' id =" . $row['sno'] . " >Edit</button> <button class='delete btn btn-sm btn-primary' id =d" . $row['sno'] . " >Delete</button></td>
-                        </tr>";
-                    }
-
-
-
-
-                    ?>
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                $sno = $sno++;
+                                echo "<tr>
+                                    <th scope='row'>" . $row['sno'] . "</th>
+                                    <td>" . $row['title'] . "</td>
+                                    <td>" . $row['description'] . "</td>
+                                    <td><button class='edit btn btn-sm btn-primary' id =" . $row['sno'] . " >Edit</button> <button class='delete btn btn-sm btn-primary' id =d" . $row['sno'] . " >Delete</button></td>
+                                </tr>";
+                            }
+                        ?>
                     <!-- PHP FOR SELECT AND TABLE UI OVER -->
 
 
